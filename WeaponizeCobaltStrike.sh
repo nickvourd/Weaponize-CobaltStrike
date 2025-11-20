@@ -17,6 +17,7 @@ REPO6="https://github.com/Nomad0x7/sekken-enum.git"
 REPO7="https://github.com/CodeXTF2/ScreenshotBOF.git"
 REPO8="https://github.com/CodeXTF2/WebcamBOF.git"
 REPO9="https://github.com/CodeXTF2/WindowSpy.git"
+REP10="https://github.com/RiccardoAncarani/BOFs.git"
 
 echo "[+] Cloning CS-Aggressor-Kit by @nickvourd..."
 git clone "$REPO1" "$OPT_DIR/CS-Aggressor-Kit"
@@ -44,6 +45,9 @@ git clone "$REPO8" "$OPT_DIR/WebcamBOF"
 
 echo "[+] Cloning WindowSpy by CodeX..."
 git clone "$REPO9" "$OPT_DIR/WindowSpy"
+
+echo "[+] Cloning BOFs by RiccardoAncarani..."
+git clone "$REPO10" "$OPT_DIR/BOFs-Riccardo"
 
 echo "[+] Setting permissions for make_all.sh of CS-Remote-OPs-BOF..."
 chmod +x "$OPT_DIR/CS-Remote-OPs-BOF/make_all.sh"
