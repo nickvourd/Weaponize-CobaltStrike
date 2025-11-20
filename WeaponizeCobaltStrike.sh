@@ -14,6 +14,9 @@ REPO3="https://github.com/trustedsec/CS-Situational-Awareness-BOF.git"
 REPO4="https://github.com/nickvourd/GetWebDAVStatus.git"
 REPO5="https://github.com/outflanknl/C2-Tool-Collection.git"
 REPO6="https://github.com/Nomad0x7/sekken-enum.git"
+REPO7="https://github.com/CodeXTF2/ScreenshotBOF.git"
+REPO8="https://github.com/CodeXTF2/WebcamBOF.git"
+REPO9="https://github.com/CodeXTF2/WindowSpy.git"
 
 echo "[+] Cloning CS-Aggressor-Kit by @nickvourd..."
 git clone "$REPO1" "$OPT_DIR/CS-Aggressor-Kit"
@@ -32,6 +35,15 @@ git clone "$REPO5" "$OPT_DIR/C2-Tool-Collection"
 
 echo "[+] Cloning sekken-enum by Nomad0x7..."
 git clone "$REPO6" "$OPT_DIR/sekken-enum"
+
+echo "[+] Cloning ScreenshotBOF by CodeX..."
+git clone "$REPO7" "$OPT_DIR/ScreenshotBOF"
+
+echo "[+] Cloning WebcamBOF by CodeX..."
+git clone "$REPO8" "$OPT_DIR/WebcamBOF"
+
+echo "[+] Cloning WindowSpy by CodeX..."
+git clone "$REPO9" "$OPT_DIR/WindowSpy"
 
 echo "[+] Setting permissions for make_all.sh of CS-Remote-OPs-BOF..."
 chmod +x "$OPT_DIR/CS-Remote-OPs-BOF/make_all.sh"
