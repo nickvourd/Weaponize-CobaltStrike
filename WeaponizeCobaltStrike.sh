@@ -1,12 +1,13 @@
 #!/bin/bash
 
 cat << 'EOF'
- __      __                                   .__       .__                 _________   _________
-/  \    /  \ ____ _____  ______   ____   ____ |__|______|__| ____    ____   \_   ___ \ /   _____/
-\   \/\/   // __ \\__  \ \____ \ /  _ \ /    \|  \___   /  |/    \  / ___\  /    \  \/ \_____  \ 
- \        /\  ___/ / __ \|  |_> >  <_> )   |  \  |/    /|  |   |  \/ /_/  > \     \____/        \
-  \__/\  /  \___  >____  /   __/ \____/|___|  /__/_____ \__|___|  /\___  /   \______  /_______  /
-       \/       \/     \/|__|               \/         \/       \//_____/           \/        \/ 
+                                                                                                                                    
+                                                                                                                                    
+██     ██ ▄▄▄▄▄  ▄▄▄  ▄▄▄▄   ▄▄▄  ▄▄  ▄▄ ▄▄ ▄▄▄▄▄ ▄▄▄▄▄   ▄█████  ▄▄▄  ▄▄▄▄   ▄▄▄  ▄▄   ▄▄▄▄▄▄   ▄█████ ▄▄▄▄▄▄ ▄▄▄▄  ▄▄ ▄▄ ▄▄ ▄▄▄▄▄ 
+██ ▄█▄ ██ ██▄▄  ██▀██ ██▄█▀ ██▀██ ███▄██ ██   ▄█▀ ██▄▄    ██     ██▀██ ██▄██ ██▀██ ██     ██     ▀▀▀▄▄▄   ██   ██▄█▄ ██ ██▄█▀ ██▄▄  
+ ▀██▀██▀  ██▄▄▄ ██▀██ ██    ▀███▀ ██ ▀██ ██ ▄██▄▄ ██▄▄▄   ▀█████ ▀███▀ ██▄█▀ ██▀██ ██▄▄▄  ██     █████▀   ██   ██ ██ ██ ██ ██ ██▄▄▄ 
+
+                                                Created with ❤ by @nickvourd                                                                                                                                                                                                                                                                                                                                                                        
 EOF
 
 set -e
@@ -140,11 +141,6 @@ clone_repo "$REPO7"  "$OPT_DIR/ScreenshotBOF"                    "ScreenshotBOF 
 clone_repo "$REPO8"  "$OPT_DIR/WebcamBOF"                        "WebcamBOF by CodeXTF2"
 clone_repo "$REPO9"  "$OPT_DIR/WindowSpy"                        "WindowSpy by CodeXTF2"
 clone_repo "$REPO10" "$OPT_DIR/BOFs-Riccardo"                    "BOFs by RiccardoAncarani"
-
-echo -e "\n[+] Setting executable permissions..."
-
-sudo chmod +x "$OPT_DIR/CS-Remote-OPs-BOF/make_all.sh"
-sudo chmod +x "$OPT_DIR/CS-Situational-Awareness-BOF/make_all.sh"
 
 echo "[+] Done!"
 
