@@ -1,13 +1,100 @@
-#!/usr/env bash
+#!/bin/bash
 
-# Check for root
-if [ "$EUID" -ne 0 ]; then
-    echo "[!] Please run as root."
-    exit 1
-fi
+set -e
+
+OS="$(uname -s)"
+UID_CHECK="$(id -u)"
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+echo "[*] Detected OS: $OS"
+
+install_macos() {
+    if [[ "$UID_CHECK" -eq 0 ]]; then
+        echo "[!] Do NOT run this script with sudo on macOS."
+        echo "    Homebrew must be executed as a normal user."
+        exit 1
+    fi
+
+    if ! command_exists brew; then
+        echo "[*] Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    echo "[*] Updating Homebrew..."
+    brew update
+
+    if ! command_exists x86_64-w64-mingw32-gcc; then
+        echo "[*] Installing mingw-w64..."
+        brew install mingw-w64
+    else
+        echo "[+] mingw-w64 already installed"
+    fi
+
+    if ! command_exists clang; then
+        echo "[*] Installing LLVM..."
+        brew install llvm
+    else
+        echo "[+] LLVM already installed"
+    fi
+
+    LLVM_PATH="/opt/homebrew/opt/llvm/bin"
+    if [[ ":$PATH:" != *":$LLVM_PATH:"* ]]; then
+        echo "[*] Adding LLVM to PATH"
+        echo "export PATH=\"$LLVM_PATH:\$PATH\"" >> ~/.zshrc
+        export PATH="$LLVM_PATH:$PATH"
+    fi
+}
+
+install_linux() {
+    if [[ "$UID_CHECK" -ne 0 ]]; then
+        SUDO="sudo"
+    fi
+
+    if command_exists apt; then
+        $SUDO apt update
+        $SUDO apt install -y mingw-w64 llvm clang
+
+    elif command_exists dnf; then
+        $SUDO dnf install -y mingw64-gcc llvm clang
+
+    elif command_exists pacman; then
+        $SUDO pacman -Sy --noconfirm mingw-w64-gcc llvm clang
+
+    else
+        echo "[!] Unsupported Linux distribution"
+        exit 1
+    fi
+}
+
+case "$OS" in
+    Darwin)
+        install_macos
+        ;;
+    Linux)
+        install_linux
+        ;;
+    *)
+        echo "[!] Unsupported OS: $OS"
+        exit 1
+        ;;
+esac
+
+echo "[✓] Installation check completed"
+
+echo "[*] Versions:"
+command_exists x86_64-w64-mingw32-gcc && x86_64-w64-mingw32-gcc --version | head -n 1
+command_exists clang && clang --version | head -n 1
+
+#!/usr/bin/env bash
+
+set -e
 
 # Variables
 OPT_DIR="/opt"
+
 REPO1="https://github.com/nickvourd/CS-Aggressor-Kit.git"
 REPO2="https://github.com/trustedsec/CS-Remote-OPs-BOF.git"
 REPO3="https://github.com/trustedsec/CS-Situational-Awareness-BOF.git"
@@ -17,43 +104,38 @@ REPO6="https://github.com/Nomad0x7/sekken-enum.git"
 REPO7="https://github.com/CodeXTF2/ScreenshotBOF.git"
 REPO8="https://github.com/CodeXTF2/WebcamBOF.git"
 REPO9="https://github.com/CodeXTF2/WindowSpy.git"
-REP10="https://github.com/RiccardoAncarani/BOFs.git"
+REPO10="https://github.com/RiccardoAncarani/BOFs.git"
 
-echo "[+] Cloning CS-Aggressor-Kit by @nickvourd..."
-git clone "$REPO1" "$OPT_DIR/CS-Aggressor-Kit"
+clone_repo() {
+    local repo_url="$1"
+    local dest_dir="$2"
+    local label="$3"
 
-echo "[+] Cloning CS-Remote-OPs-BOF by @TrustedSec..."
-git clone "$REPO2" "$OPT_DIR/CS-Remote-OPs-BOF"
+    echo -e "\n[+] Cloning $label..."
 
-echo "[+] Cloning CS-Situational-Awareness-BOF by @TrustedSec..."
-git clone "$REPO3" "$OPT_DIR/CS-Situational-Awareness-BOF"
+    if [ -d "$dest_dir" ]; then
+        echo "[!] $dest_dir already exists. Removing..."
+        sudo rm -rf "$dest_dir"
+    fi
 
-echo "[+] Cloning GetWebDAVStatus by @nickvourd..."
-git clone "$REPO4" "$OPT_DIR/GetWebDAVStatus"
+    sudo git clone "$repo_url" "$dest_dir"
+}
 
-echo "[+] Cloning C2-Tool-Collection by @OutflankNL..."
-git clone "$REPO5" "$OPT_DIR/C2-Tool-Collection"
+clone_repo "$REPO1"  "$OPT_DIR/CS-Aggressor-Kit"                  "CS-Aggressor-Kit by @nickvourd"
+clone_repo "$REPO2"  "$OPT_DIR/CS-Remote-OPs-BOF"                "CS-Remote-OPs-BOF by TrustedSec"
+clone_repo "$REPO3"  "$OPT_DIR/CS-Situational-Awareness-BOF"     "CS-Situational-Awareness-BOF by TrustedSec"
+clone_repo "$REPO4"  "$OPT_DIR/GetWebDAVStatus"                  "GetWebDAVStatus by @nickvourd"
+clone_repo "$REPO5"  "$OPT_DIR/C2-Tool-Collection"               "C2-Tool-Collection by OutflankNL"
+clone_repo "$REPO6"  "$OPT_DIR/sekken-enum"                      "sekken-enum by Nomad0x7"
+clone_repo "$REPO7"  "$OPT_DIR/ScreenshotBOF"                    "ScreenshotBOF by CodeXTF2"
+clone_repo "$REPO8"  "$OPT_DIR/WebcamBOF"                        "WebcamBOF by CodeXTF2"
+clone_repo "$REPO9"  "$OPT_DIR/WindowSpy"                        "WindowSpy by CodeXTF2"
+clone_repo "$REPO10" "$OPT_DIR/BOFs-Riccardo"                    "BOFs by RiccardoAncarani"
 
-echo "[+] Cloning sekken-enum by Nomad0x7..."
-git clone "$REPO6" "$OPT_DIR/sekken-enum"
+echo -e "\n[+] Setting executable permissions..."
 
-echo "[+] Cloning ScreenshotBOF by CodeX..."
-git clone "$REPO7" "$OPT_DIR/ScreenshotBOF"
-
-echo "[+] Cloning WebcamBOF by CodeX..."
-git clone "$REPO8" "$OPT_DIR/WebcamBOF"
-
-echo "[+] Cloning WindowSpy by CodeX..."
-git clone "$REPO9" "$OPT_DIR/WindowSpy"
-
-echo "[+] Cloning BOFs by RiccardoAncarani..."
-git clone "$REPO10" "$OPT_DIR/BOFs-Riccardo"
-
-echo "[+] Setting permissions for make_all.sh of CS-Remote-OPs-BOF..."
-chmod +x "$OPT_DIR/CS-Remote-OPs-BOF/make_all.sh"
-
-echo "[+] Setting permissions for make_all.sh of CS-Situational-Awareness-BOF..."
-chmod +x "$OPT_DIR/CS-Situational-Awareness-BOF/make_all.sh"
+sudo chmod +x "$OPT_DIR/CS-Remote-OPs-BOF/make_all.sh"
+sudo chmod +x "$OPT_DIR/CS-Situational-Awareness-BOF/make_all.sh"
 
 echo "[+] Done!"
 
