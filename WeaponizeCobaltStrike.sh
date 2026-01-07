@@ -98,10 +98,6 @@ echo "[*] Versions:"
 command_exists x86_64-w64-mingw32-gcc && x86_64-w64-mingw32-gcc --version | head -n 1
 command_exists clang && clang --version | head -n 1
 
-#!/usr/bin/env bash
-
-set -e
-
 # Variables
 OPT_DIR="/opt"
 
@@ -114,7 +110,15 @@ REPO6="https://github.com/Nomad0x7/sekken-enum.git"
 REPO7="https://github.com/CodeXTF2/ScreenshotBOF.git"
 REPO8="https://github.com/CodeXTF2/WebcamBOF.git"
 REPO9="https://github.com/CodeXTF2/WindowSpy.git"
-REPO10="https://github.com/RiccardoAncarani/BOFs.git"
+REPO10="https://gtihub.com/nickvourd/COM-Hunter.git"
+REPO11="https://github.com/cube0x0/LdapSignCheck.git"
+REPO12="https://github.com/mertdas/PrivKit.git"
+REPO13="https://github.com/leftp/RegPersist.git"
+REPO14="https://github.com/Octoberfest7/Inline-Execute-PE.git"
+REPO15="https://github.com/Octoberfest7/MemFiles.git"
+REPO16="https://github.com/jhalon/cSessionHop.git"
+REPO17="https://github.com/CCob/BOF.NET.git"
+REPO18="https://github.com/netero1010/RDPHijack-BOF.git"
 
 clone_repo() {
     local repo_url="$1"
@@ -131,16 +135,24 @@ clone_repo() {
     sudo git clone "$repo_url" "$dest_dir"
 }
 
-clone_repo "$REPO1"  "$OPT_DIR/CS-Aggressor-Kit"                  "CS-Aggressor-Kit by @nickvourd"
-clone_repo "$REPO2"  "$OPT_DIR/CS-Remote-OPs-BOF"                "CS-Remote-OPs-BOF by TrustedSec"
-clone_repo "$REPO3"  "$OPT_DIR/CS-Situational-Awareness-BOF"     "CS-Situational-Awareness-BOF by TrustedSec"
+clone_repo "$REPO1"  "$OPT_DIR/CS-Aggressor-Kit"                 "CS-Aggressor-Kit by @nickvourd"
+clone_repo "$REPO2"  "$OPT_DIR/CS-Remote-OPs-BOF"                "CS-Remote-OPs-BOF by @TrustedSec"
+clone_repo "$REPO3"  "$OPT_DIR/CS-Situational-Awareness-BOF"     "CS-Situational-Awareness-BOF by @TrustedSec"
 clone_repo "$REPO4"  "$OPT_DIR/GetWebDAVStatus"                  "GetWebDAVStatus by @nickvourd"
-clone_repo "$REPO5"  "$OPT_DIR/C2-Tool-Collection"               "C2-Tool-Collection by OutflankNL"
-clone_repo "$REPO6"  "$OPT_DIR/sekken-enum"                      "sekken-enum by Nomad0x7"
-clone_repo "$REPO7"  "$OPT_DIR/ScreenshotBOF"                    "ScreenshotBOF by CodeXTF2"
-clone_repo "$REPO8"  "$OPT_DIR/WebcamBOF"                        "WebcamBOF by CodeXTF2"
-clone_repo "$REPO9"  "$OPT_DIR/WindowSpy"                        "WindowSpy by CodeXTF2"
-clone_repo "$REPO10" "$OPT_DIR/BOFs-Riccardo"                    "BOFs by RiccardoAncarani"
+clone_repo "$REPO5"  "$OPT_DIR/C2-Tool-Collection"               "C2-Tool-Collection by @OutflankNL"
+clone_repo "$REPO6"  "$OPT_DIR/sekken-enum"                      "sekken-enum by nomad0x7"
+clone_repo "$REPO7"  "$OPT_DIR/ScreenshotBOF"                    "ScreenshotBOF by @codex_tf2"
+clone_repo "$REPO8"  "$OPT_DIR/WebcamBOF"                        "WebcamBOF by @codex_tf2"
+clone_repo "$REPO9"  "$OPT_DIR/WindowSpy"                        "WindowSpy by @codex_tf2"
+clone_repo "$REPO10" "$OPT_DIR/COM-Hunter"                       "COM-Hunter by @nickvourd"
+clone_repo "$REPO11" "$OPT_DIR/LdapSignCheck"                    "LdapSignCheck by @cube0x0"
+clone_repo "$REPO12" "$OPT_DIR/PrivKit"                          "PrivKit by @merterpreter"
+clone_repo "$REPO13" "$OPT_DIR/RegPersist"                       "RegPersist by @lefterispan"
+clone_repo "$REPO14" "$OPT_DIR/Inline-Execute-PE"                "Inline-Execute-PE by @Octoberfest73"
+clone_repo "$REPO15" "$OPT_DIR/MemFiles"                         "MemFiles by @Octoberfest73"
+clone_repo "$REPO16" "$OPT_DIR/cSessionHop"                      "cSessionHop by @jack_halon"
+clone_repo "$REPO17" "$OPT_DIR/BOF.NET"                          "BOF.NET by @_EthicalChaos_"
+clone_repo "$REPO18" "$OPT_DIR/RDPHijack-BOF"                    "RDPHijack-BOF by @netero_1010"
 
-echo "[+] Done!"
+echo -e "\n[+] Done!"
 
