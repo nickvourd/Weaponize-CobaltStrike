@@ -119,6 +119,7 @@ REPO15="https://github.com/Octoberfest7/MemFiles.git"
 REPO16="https://github.com/jhalon/cSessionHop.git"
 REPO17="https://github.com/CCob/BOF.NET.git"
 REPO18="https://github.com/netero1010/RDPHijack-BOF.git"
+REPO19="https://github.com/incursi0n/ClipboardStealBOF.git"
 
 clone_repo() {
     local repo_url="$1"
@@ -153,6 +154,6 @@ clone_repo "$REPO15" "$OPT_DIR/MemFiles"                         "MemFiles by @O
 clone_repo "$REPO16" "$OPT_DIR/cSessionHop"                      "cSessionHop by @jack_halon"
 clone_repo "$REPO17" "$OPT_DIR/BOF.NET"                          "BOF.NET by @_EthicalChaos_"
 clone_repo "$REPO18" "$OPT_DIR/RDPHijack-BOF"                    "RDPHijack-BOF by @netero_1010"
+clone_repo "$REPO19" "$OPT_DIR/ClipboardStealBOF"                "ClipboardStealBOF by @Incursi0n"
 
 echo -e "\n[+] Done!"
-
