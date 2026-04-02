@@ -159,6 +159,88 @@ clone_repo() {
     run_as_root git clone "$repo_url" "$dest_dir"
 }
 
+combine_outflank_cna() {
+    TARGET_DIR="$OPT_DIR/C2-Tool-Collection"
+    OUTPUT_DIR="$OPT_DIR/C2-Tool-Collection/BOF"
+    OUTPUT_FILE="$OUTPUT_DIR/Outflank-OpenSource.cna"
+
+    echo
+    echo "[+] Combining CNA files from C2-Tool-Collection..."
+
+    if [ ! -d "$TARGET_DIR" ]; then
+        echo "[!] Missing: $TARGET_DIR"
+        return 1
+    fi
+
+    # FIX: ensure we can write
+    sudo chown $(whoami) "$OUTPUT_DIR"
+
+    > "$OUTPUT_FILE"
+
+    CNA_FILES=$(find "$TARGET_DIR/BOF" -type f -name "*.cna" 2>/dev/null | sort)
+
+    if [[ -z "$CNA_FILES" ]]; then
+        echo "[!] No CNA files found"
+        return 1
+    fi
+
+    for file in $CNA_FILES; do
+        echo "[*] Adding: $file"
+
+        {
+            echo ""
+            echo "# ===== FILE: $file ====="
+            echo ""
+            cat "$file"
+            echo ""
+        } >> "$OUTPUT_FILE"
+    done
+
+    echo
+    echo "[+] Combined CNA saved to:"
+    echo "    $OUTPUT_FILE"
+    echo
+}
+
+combine_outflank_cna() {
+    TARGET_DIR="$OPT_DIR/C2-Tool-Collection/BOF"
+    OUTPUT_FILE="$OPT_DIR/C2-Tool-Collection/BOF/Outflank-OpenSource.cna"
+
+    echo
+    echo "[+] Combining CNA files from C2-Tool-Collection..."
+
+    if [ ! -d "$TARGET_DIR" ]; then
+        echo "[!] Missing: $TARGET_DIR"
+        return 1
+    fi
+
+    CNA_FILES=$(find "$TARGET_DIR" -type f -name "*.cna" ! -name "Outflank-OpenSource.cna" 2>/dev/null | sort)
+
+    if [[ -z "$CNA_FILES" ]]; then
+        echo "[!] No CNA files found"
+        return 1
+    fi
+
+    sudo truncate -s 0 "$OUTPUT_FILE"
+
+    for file in $CNA_FILES; do
+        #echo "[*] Adding: $file"
+
+        echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+        echo "# ===== FILE: $file =====" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+        echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+
+        cat "$file" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+
+        echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+        echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+    done
+
+    echo "[+] Combined CNA saved to:"
+    echo "    $OUTPUT_FILE"
+    echo
+}
+
 clone_repos() {
     clone_repo "$REPO1"  "$OPT_DIR/CS-Aggressor-Kit"             "CS-Aggressor-Kit by @nickvourd"
     clone_repo "$REPO2"  "$OPT_DIR/CS-Remote-OPs-BOF"            "CS-Remote-OPs-BOF by @TrustedSec"
@@ -244,6 +326,8 @@ compile_all() {
     echo
     echo "[+] Done!"
 
+    combine_outflank_cna
+
     find_cna_internal
 }
 
@@ -251,14 +335,63 @@ find_cna_internal() {
     echo
     echo "[+] Searching for CNA files..."
 
-    CNA_FILES=$(find /opt -type f -name "*.cna" 2>/dev/null)
+    FOUND=0
 
-    if [[ -z "$CNA_FILES" ]]; then
+    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist; do
+        REPO_PATH="$OPT_DIR/$repo"
+
+        [ ! -d "$REPO_PATH" ] && continue
+
+        case "$repo" in
+            CS-Aggressor-Kit) AUTHOR="@nickvourd" ;;
+            CS-Remote-OPs-BOF) AUTHOR="@TrustedSec" ;;
+            CS-Situational-Awareness-BOF) AUTHOR="@TrustedSec" ;;
+            GetWebDAVStatus) AUTHOR="@nickvourd" ;;
+            C2-Tool-Collection) AUTHOR="@OutflankNL" ;;
+            sekken-enum) AUTHOR="@nomad0x7" ;;
+            WebcamBOF) AUTHOR="@codex_tf2" ;;
+            COM-Hunter) AUTHOR="@nickvourd" ;;
+            PrivKit) AUTHOR="@merterpreter" ;;
+            RegPersist) AUTHOR="@lefterispan" ;;
+            *) AUTHOR="@unknown" ;;
+        esac
+
+        if [[ "$repo" == "C2-Tool-Collection" ]]; then
+            CNA_FILES=$(find "$REPO_PATH" -type f -name "*.cna" \
+                ! -path "$REPO_PATH/BOF/*" \
+                ! -path "$REPO_PATH/Other/*" \
+                2>/dev/null | sort)
+
+            if [ -f "$REPO_PATH/BOF/Outflank-OpenSource.cna" ]; then
+                if [[ -n "$CNA_FILES" ]]; then
+                    CNA_FILES="$CNA_FILES
+$REPO_PATH/BOF/Outflank-OpenSource.cna"
+                else
+                    CNA_FILES="$REPO_PATH/BOF/Outflank-OpenSource.cna"
+                fi
+            fi
+        else
+            CNA_FILES=$(find "$REPO_PATH" -type f -name "*.cna" 2>/dev/null | sort)
+        fi
+
+        if [[ -n "$CNA_FILES" ]]; then
+            FOUND=1
+            echo
+            echo "[+] $repo CNA by $AUTHOR:"
+
+            while IFS= read -r file; do
+                [ -n "$file" ] && echo "-> $file"
+            done <<EOF
+$CNA_FILES
+EOF
+        fi
+    done
+
+    echo
+
+    if [[ "$FOUND" -eq 0 ]]; then
         return 1
     else
-        echo "[+] CNA files found:"
-        echo "$CNA_FILES" | sort
-        echo
         return 0
     fi
 }
