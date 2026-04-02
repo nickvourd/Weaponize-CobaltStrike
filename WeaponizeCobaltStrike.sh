@@ -394,6 +394,7 @@ EOF
     else
         return 0
     fi
+    echo
 }
 
 find_cna() {
