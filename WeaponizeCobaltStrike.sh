@@ -26,6 +26,7 @@ REPO7="https://github.com/CodeXTF2/WebcamBOF.git"
 REPO8="https://github.com/nickvourd/COM-Hunter.git"
 REPO9="https://github.com/mertdas/PrivKit.git"
 REPO10="https://github.com/leftp/RegPersist.git"
+REPO11="https://github.com/outflanknl/HelpColor.git"
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -252,6 +253,7 @@ clone_repos() {
     clone_repo "$REPO8"  "$OPT_DIR/COM-Hunter"                   "COM-Hunter by @nickvourd"
     clone_repo "$REPO9"  "$OPT_DIR/PrivKit"                      "PrivKit by @merterpreter"
     clone_repo "$REPO10" "$OPT_DIR/RegPersist"                   "RegPersist by @lefterispan"
+    clone_repo "$REPO11" "$OPT_DIR/HelpColor"                    "HelpColor by @OutflankNL"
 
     echo
     echo -e "[+] Cloning complete\n"
@@ -337,7 +339,7 @@ find_cna_internal() {
 
     FOUND=0
 
-    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist; do
+    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor; do
         REPO_PATH="$OPT_DIR/$repo"
 
         [ ! -d "$REPO_PATH" ] && continue
@@ -353,6 +355,7 @@ find_cna_internal() {
             COM-Hunter) AUTHOR="@nickvourd" ;;
             PrivKit) AUTHOR="@merterpreter" ;;
             RegPersist) AUTHOR="@lefterispan" ;;
+            HelpColor) AUTHOR="@OutflankNL" ;;
             *) AUTHOR="@unknown" ;;
         esac
 
