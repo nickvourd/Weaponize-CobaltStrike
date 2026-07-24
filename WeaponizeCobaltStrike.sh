@@ -27,6 +27,7 @@ REPO8="https://github.com/nickvourd/COM-Hunter.git"
 REPO9="https://github.com/mertdas/PrivKit.git"
 REPO10="https://github.com/leftp/RegPersist.git"
 REPO11="https://github.com/outflanknl/HelpColor.git"
+REPO12="https://github.com/nickzer0/PersisTask-BOF.git"
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
