@@ -51,7 +51,6 @@ The authors and contributors of this project are not liable for any illegal use 
   - [Table of Contents](#table-of-contents)
   - [Acknowledgement](#acknowledgement)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
   - [Usage](#usage)
   - [References](#references)
 
@@ -74,32 +73,6 @@ Weaponize-CobaltStrike requires the following tools to be installed on your syst
 
 - **macOS** (Intel and Apple Silicon via Homebrew)
 - **Linux** (Debian/Ubuntu, Fedora/RHEL, Arch)
-
-## Installation
-
-### For macOS
-
-Do NOT run the full script with sudo on macOS. Homebrew should run as a normal user.
-
-```bash
-./WeaponizeCobaltStrike.sh install
-```
-
-The script will automatically install Homebrew and all required dependencies.
-
-### For Linux
-
-On Linux, you may need sudo privileges for package manager operations.
-
-```bash
-sudo ./WeaponizeCobaltStrike.sh install
-```
-
-Or if running as root:
-
-```bash
-./WeaponizeCobaltStrike.sh install
-```
 
 ## Usage
 
