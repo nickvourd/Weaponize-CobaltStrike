@@ -258,6 +258,7 @@ clone_repos() {
     clone_repo "$REPO10" "$OPT_DIR/RegPersist"                   "RegPersist by @lefterispan"
     clone_repo "$REPO11" "$OPT_DIR/HelpColor"                    "HelpColor by @OutflankNL"
     clone_repo "$REPO12" "$OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
+    clone_repo "REPO14"  "OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
 
     echo
     echo -e "[+] Cloning complete\n"
@@ -322,18 +323,19 @@ compile_all() {
         echo "[!] Missing: $OPT_DIR/RegPersist"
     fi
 
-    if [ -d "$OPT_DIR/C2-Tool-Collection/BOF" ]; then
-        cd "$OPT_DIR/C2-Tool-Collection/BOF"
-        run_as_root make
-    else
-        echo "[!] Missing: $OPT_DIR/C2-Tool-Collection"
-    fi
-
     if [ -d "$OPT_DIR/PersisTask-BOF" ]; then
         cd "$OPT_DIR/PersisTask-BOF"
         run_as_root make
     else
         echo "[!] Missing: $OPT_DIR/PersisTask-BOF"
+    fi
+
+
+    if [ -d "$OPT_DIR/C2-Tool-Collection/BOF" ]; then
+        cd "$OPT_DIR/C2-Tool-Collection/BOF"
+        run_as_root make
+    else
+        echo "[!] Missing: $OPT_DIR/C2-Tool-Collection"
     fi
 
     echo
