@@ -28,6 +28,7 @@ REPO9="https://github.com/mertdas/PrivKit.git"
 REPO10="https://github.com/leftp/RegPersist.git"
 REPO11="https://github.com/outflanknl/HelpColor.git"
 REPO12="https://github.com/nickzer0/PersisTask-BOF.git"
+REPO13="https://github.com/jhalon/cSessionHop.git"
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -258,6 +259,7 @@ clone_repos() {
     clone_repo "$REPO10" "$OPT_DIR/RegPersist"                   "RegPersist by @lefterispan"
     clone_repo "$REPO11" "$OPT_DIR/HelpColor"                    "HelpColor by @OutflankNL"
     clone_repo "$REPO12" "$OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
+    clone_repo "$REPO13" "$OPT_DIR/cSessionHop"                   "cSessionHop by @jhalon"
 
     echo
     echo -e "[+] Cloning complete\n"
@@ -328,7 +330,13 @@ compile_all() {
     else
         echo "[!] Missing: $OPT_DIR/PersisTask-BOF"
     fi
-
+    
+    if [ -d "$OPT_DIR/cSessionHop" ]; then
+        cd "$OPT_DIR/cSessionHop"
+        run_as_root make
+    else
+        echo "[!] Missing: $OPT_DIR/cSessionHop"
+    fi
 
     if [ -d "$OPT_DIR/C2-Tool-Collection/BOF" ]; then
         cd "$OPT_DIR/C2-Tool-Collection/BOF"
@@ -351,7 +359,7 @@ find_cna_internal() {
 
     FOUND=0
 
-    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor; do
+    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop; do
         REPO_PATH="$OPT_DIR/$repo"
 
         [ ! -d "$REPO_PATH" ] && continue
@@ -369,6 +377,7 @@ find_cna_internal() {
             RegPersist) AUTHOR="@lefterispan" ;;
             HelpColor) AUTHOR="@OutflankNL" ;;
             PersisTask-BOF) AUTHOR="@nickzer0" ;;
+            cSessionHop) AUTHOR="@jhalon" ;;
             *) AUTHOR="@unknown" ;;
         esac
 
