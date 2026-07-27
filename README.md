@@ -30,12 +30,12 @@ Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 - [GetWebDAVStatus](https://github.com/nickvourd/GetWebDAVStatus) - WebDAV status enumeration
 - [C2-Tool-Collection](https://github.com/outflanknl/c2-tool-collection) - Comprehensive C2 tool collection
 - [sekken-enum](https://github.com/Nomad0x7/sekken-enum) - Enumeration BOF
-- **WebcamBOF** - Webcam access BOF
-- **COM-Hunter** - COM object enumeration
-- **PrivKit** - Privilege escalation toolkit
-- **RegPersist** - Registry-based persistence BOF
-- **HelpColor** - Color formatting utilities
-- **PersisTask-BOF** - Persistence through scheduled tasks
+- [WebcamBOF](https://github.com/CodeXTF2/WebcamBOF) - Webcam access BOF
+- [COM-Hunter](https://github.com/nickvourd/COM-Hunter) - COM object enumeration
+- [PrivKit](https://github.com/mertdas/PrivKit) - Privilege escalation toolkit
+- [RegPersist](https://github.com/leftp/RegPersist) - Registry-based persistence BOF
+- [HelpColor](https://github.com/outflanknl/HelpColor) - Color formatting utilities
+- [PersisTask-BOF](https://github.com/nickzer0/PersisTask-BOF) - Persistence through scheduled tasks
 
 > If you find any bugs or have suggestions, don't hesitate to [report them](https://github.com/nickvourd/Weaponize-CobaltStrike/issues). Your feedback is valuable in improving the quality of this project!
 
