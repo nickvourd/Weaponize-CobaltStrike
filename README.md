@@ -39,7 +39,7 @@ Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 
 > If you find any bugs or have suggestions, don't hesitate to [report them](https://github.com/nickvourd/Weaponize-CobaltStrike/issues). Your feedback is valuable in improving the quality of this project!
 
-Created with <3 by [@nickvourd](https://x.com/nickvourd/)
+Created with :heart: by [@nickvourd](https://x.com/nickvourd/)
 
 ## Disclaimer
 
