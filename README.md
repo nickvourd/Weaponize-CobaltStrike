@@ -29,9 +29,9 @@ Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 - [CS-Situational-Awareness-BOF](https://github.com/trustedsec/CS-Situational-Awareness-BOF) - Situational awareness and reconnaissance BOFs
 - [GetWebDAVStatus](https://github.com/nickvourd/GetWebDAVStatus) - WebDAV status enumeration
 - [C2-Tool-Collection](https://github.com/outflanknl/c2-tool-collection) - Comprehensive C2 tool collection
-- [sekken-enum](https://github.com/Nomad0x7/sekken-enum) - Enumeration BOF
+- [sekken-enum](https://github.com/Nomad0x7/sekken-enum) - ADWS Enumeration BOF
 - [WebcamBOF](https://github.com/CodeXTF2/WebcamBOF) - Webcam access BOF
-- [COM-Hunter](https://github.com/nickvourd/COM-Hunter) - COM object enumeration
+- [COM-Hunter](https://github.com/nickvourd/COM-Hunter) - COM object enumeration/persistence
 - [PrivKit](https://github.com/mertdas/PrivKit) - Privilege escalation toolkit
 - [RegPersist](https://github.com/leftp/RegPersist) - Registry-based persistence BOF
 - [HelpColor](https://github.com/outflanknl/HelpColor) - Color formatting utilities
