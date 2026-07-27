@@ -226,13 +226,15 @@ combine_outflank_cna() {
     sudo truncate -s 0 "$OUTPUT_FILE"
 
     for file in $CNA_FILES; do
-        #echo "[*] Adding: $file"
+        # Extract the subdirectory name (e.g., "Klist" from "/opt/.../BOF/Klist/Klist.cna")
+        subdir=$(basename $(dirname "$file"))
 
         echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
         echo "# ===== FILE: $file =====" | sudo tee -a "$OUTPUT_FILE" > /dev/null
         echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
 
-        cat "$file" | sudo tee -a "$OUTPUT_FILE" > /dev/null
+        # Fix script_resource() paths to include subdirectory
+        cat "$file" | sed "s/script_resource(\"\([^/]*\.o\)\"/script_resource(\"$subdir\/\1\"/g" | sudo tee -a "$OUTPUT_FILE" > /dev/null
 
         echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
         echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
