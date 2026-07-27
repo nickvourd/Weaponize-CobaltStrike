@@ -258,7 +258,6 @@ clone_repos() {
     clone_repo "$REPO10" "$OPT_DIR/RegPersist"                   "RegPersist by @lefterispan"
     clone_repo "$REPO11" "$OPT_DIR/HelpColor"                    "HelpColor by @OutflankNL"
     clone_repo "$REPO12" "$OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
-    clone_repo "$REPO13" "$OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
 
     echo
     echo -e "[+] Cloning complete\n"
