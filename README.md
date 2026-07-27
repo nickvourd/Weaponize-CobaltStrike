@@ -4,11 +4,11 @@ Your Cobalt Strike Weaponization Toolkit
 
 <p align="center">
   <img width="500" height="400" src="/Pictures/logo.svg"><br /><br />
-  <!--<img alt="GitHub License" src="https://img.shields.io/github/license/nickvourd/Weaponize-CobaltStrike?style=social&logo=GitHub&logoColor=purple">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/nickvourd/Weaponize-CobaltStrike?style=social&logo=GitHub&logoColor=purple">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nickvourd/Weaponize-CobaltStrike?logoColor=yellow"><br />
   <img alt="GitHub forks" src="https://img.shields.io/github/forks/nickvourd/Weaponize-CobaltStrike?logoColor=red">
   <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/nickvourd/Weaponize-CobaltStrike?logoColor=blue">
-  <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/nickvourd/Weaponize-CobaltStrike?style=social&logo=GitHub&logoColor=green">-->
+  <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/nickvourd/Weaponize-CobaltStrike?style=social&logo=GitHub&logoColor=green">
 </p>
 
 ## Description
