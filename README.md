@@ -24,11 +24,11 @@ Weaponize-CobaltStrike is an automated toolkit for setting up and configuring Co
 
 Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 
-- **CS-Aggressor-Kit** - Aggressor script framework for Cobalt Strike
-- **CS-Remote-OPs-BOF** - Remote operations Beacon Object Files
-- **CS-Situational-Awareness-BOF** - Situational awareness and reconnaissance BOFs
-- **GetWebDAVStatus** - WebDAV status enumeration
-- **C2-Tool-Collection** - Comprehensive C2 tool collection
+- [CS-Aggressor-Kit](https://github.com/nickvourd/CS-Aggressor-Kit) - Aggressor script framework for Cobalt Strike
+- [CS-Remote-OPs-BOF](https://github.com/trustedsec/CS-Remote-OPs-BOF) - Remote operations Beacon Object Files
+- [CS-Situational-Awareness-BOF](https://github.com/trustedsec/CS-Situational-Awareness-BOF) - Situational awareness and reconnaissance BOFs
+- [GetWebDAVStatus](https://github.com/nickvourd/GetWebDAVStatus) - WebDAV status enumeration
+- [C2-Tool-Collection](https://github.com/outflanknl/c2-tool-collection) - Comprehensive C2 tool collection
 - **sekken-enum** - Enumeration BOF
 - **WebcamBOF** - Webcam access BOF
 - **COM-Hunter** - COM object enumeration
