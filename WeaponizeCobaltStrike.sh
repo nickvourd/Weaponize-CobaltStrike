@@ -29,6 +29,7 @@ REPO10="https://github.com/leftp/RegPersist.git"
 REPO11="https://github.com/outflanknl/HelpColor.git"
 REPO12="https://github.com/nickzer0/PersisTask-BOF.git"
 REPO13="https://github.com/jhalon/cSessionHop.git"
+REPO14="https://github.com/CodeXTF2/ScreenshotBOF.git"
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -260,7 +261,7 @@ clone_repos() {
     clone_repo "$REPO11" "$OPT_DIR/HelpColor"                    "HelpColor by @OutflankNL"
     clone_repo "$REPO12" "$OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
     clone_repo "$REPO13" "$OPT_DIR/cSessionHop"                   "cSessionHop by @jhalon"
-
+    clone_repo "$REPO14" "$OPT_DIR/ScreenshotBOF"                 "ScreenshotBOF by @CodeXTF2"
     echo
     echo -e "[+] Cloning complete\n"
 }
@@ -338,6 +339,13 @@ compile_all() {
         echo "[!] Missing: $OPT_DIR/cSessionHop"
     fi
 
+    if [ -d "$OPT_DIR/ScreenshotBOF" ]; then
+        cd "$OPT_DIR/ScreenshotBOF"
+        run_as_root make
+    else
+        echo "[!] Missing: $OPT_DIR/ScreenshotBOF"
+    fi
+
     if [ -d "$OPT_DIR/C2-Tool-Collection/BOF" ]; then
         cd "$OPT_DIR/C2-Tool-Collection/BOF"
         run_as_root make
@@ -359,7 +367,7 @@ find_cna_internal() {
 
     FOUND=0
 
-    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop; do
+    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop ScreenshotBOF; do
         REPO_PATH="$OPT_DIR/$repo"
 
         [ ! -d "$REPO_PATH" ] && continue
@@ -378,6 +386,7 @@ find_cna_internal() {
             HelpColor) AUTHOR="@OutflankNL" ;;
             PersisTask-BOF) AUTHOR="@nickzer0" ;;
             cSessionHop) AUTHOR="@jhalon" ;;
+            ScreenshotBOF) AUTHOR="@CodeXTF2" ;;
             *) AUTHOR="@unknown" ;;
         esac
 

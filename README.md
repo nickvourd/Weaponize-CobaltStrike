@@ -37,6 +37,7 @@ Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 - [HelpColor](https://github.com/outflanknl/HelpColor) - Color formatting utilities
 - [PersisTask-BOF](https://github.com/nickzer0/PersisTask-BOF) - Persistence through scheduled tasks
 - [cSessionHop](https://github.com/jhalon/cSessionHop) - Hijack user sessions through the IHxHelpPaneServer
+- [ScreenshotBOF](https://github.com/CodeXTF2/ScreenshotBOF) - An alternative screenshot capability for CS
 
 > If you find any bugs or have suggestions, don't hesitate to [report them](https://github.com/nickvourd/Weaponize-CobaltStrike/issues). Your feedback is valuable in improving the quality of this project!
 
