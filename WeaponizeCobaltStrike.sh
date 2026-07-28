@@ -12,6 +12,13 @@ EOF
 
 set -e
 
+# Color codes
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 OS="$(uname -s)"
 UID_CHECK="$(id -u)"
 OPT_DIR="/opt"
@@ -54,52 +61,52 @@ usage() {
 
 install_macos() {
     if [[ "$UID_CHECK" -eq 0 ]]; then
-        echo "[!] Do NOT run the full script with sudo on macOS."
+        echo -e "${RED}[!]${NC} Do NOT run the full script with sudo on macOS."
         echo "    Homebrew should run as a normal user."
         exit 1
     fi
 
     if ! command_exists brew; then
-        echo "[*] Installing Homebrew..."
+        echo -e "${YELLOW}[*]${NC} Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    echo "[*] Updating Homebrew..."
+    echo -e "${YELLOW}[*]${NC} Updating Homebrew..."
     brew update
 
     if ! command_exists git; then
-        echo "[*] Installing git..."
+        echo -e "${YELLOW}[*]${NC} Installing git..."
         brew install git
     else
-        echo "[+] git already installed"
+        echo -e "${GREEN}[+]${NC} git already installed"
     fi
 
     if ! command_exists make; then
-        echo "[*] Installing make..."
+        echo -e "${YELLOW}[*]${NC} Installing make..."
         brew install make
     else
-        echo "[+] make already installed"
+        echo -e "${GREEN}[+]${NC} make already installed"
     fi
 
     if ! command_exists x86_64-w64-mingw32-gcc; then
-        echo "[*] Installing mingw-w64..."
+        echo -e "${YELLOW}[*]${NC} Installing mingw-w64..."
         brew install mingw-w64
     else
-        echo "[+] mingw-w64 already installed"
+        echo -e "${GREEN}[+]${NC} mingw-w64 already installed"
     fi
 
     if ! command_exists clang; then
-        echo "[*] Installing LLVM..."
+        echo -e "${YELLOW}[*]${NC} Installing LLVM..."
         brew install llvm
     else
-        echo "[+] LLVM already installed"
+        echo -e "${GREEN}[+]${NC} LLVM already installed"
     fi
 
     LLVM_PATH="/opt/homebrew/opt/llvm/bin"
     if [[ ":$PATH:" != *":$LLVM_PATH:"* ]]; then
-        echo "[*] Adding LLVM to PATH for current session"
+        echo -e "${YELLOW}[*]${NC} Adding LLVM to PATH for current session"
         export PATH="$LLVM_PATH:$PATH"
-        echo "[*] You may also want to add this to ~/.zshrc:"
+        echo -e "${YELLOW}[*]${NC} You may also want to add this to ~/.zshrc:"
         echo "    export PATH=\"$LLVM_PATH:\$PATH\""
     fi
 }
@@ -118,13 +125,13 @@ install_linux() {
     elif command_exists pacman; then
         $SUDO pacman -Sy --noconfirm git make mingw-w64-gcc llvm clang
     else
-        echo "[!] Unsupported Linux distribution"
+        echo -e "${RED}[!]${NC} Unsupported Linux distribution"
         exit 1
     fi
 }
 
 install_dependencies() {
-    echo "[*] Detected OS: $OS"
+    echo -e "${YELLOW}[*]${NC} Detected OS: $OS"
 
     case "$OS" in
         Darwin)
@@ -134,13 +141,13 @@ install_dependencies() {
             install_linux
             ;;
         *)
-            echo "[!] Unsupported OS: $OS"
+            echo -e "${RED}[!]${NC} Unsupported OS: $OS"
             exit 1
             ;;
     esac
 
-    echo "[+] Installation check completed"
-    echo "[*] Versions:"
+    echo -e "${GREEN}[+]${NC} Installation check completed"
+    echo -e "${YELLOW}[*]${NC} Versions:"
     command_exists x86_64-w64-mingw32-gcc && x86_64-w64-mingw32-gcc --version | head -n 1
     command_exists clang && clang --version | head -n 1
     command_exists make && make --version | head -n 1
@@ -153,10 +160,10 @@ clone_repo() {
     local label="$3"
 
     echo
-    echo "[+] Cloning $label..."
+    echo -e "${BLUE}[+]${NC} Cloning $label..."
 
     if [ -d "$dest_dir" ]; then
-        echo "[!] $dest_dir already exists. Removing..."
+        echo -e "${RED}[!]${NC} $dest_dir already exists. Removing..."
         run_as_root rm -rf "$dest_dir"
     fi
 
@@ -169,10 +176,10 @@ combine_outflank_cna() {
     OUTPUT_FILE="$OUTPUT_DIR/Outflank-OpenSource.cna"
 
     echo
-    echo "[+] Combining CNA files from C2-Tool-Collection..."
+    echo -e "${BLUE}[+]${NC} Combining CNA files from C2-Tool-Collection..."
 
     if [ ! -d "$TARGET_DIR" ]; then
-        echo "[!] Missing: $TARGET_DIR"
+        echo -e "${RED}[!]${NC} Missing: $TARGET_DIR"
         return 1
     fi
 
@@ -184,12 +191,12 @@ combine_outflank_cna() {
     CNA_FILES=$(find "$TARGET_DIR/BOF" -type f -name "*.cna" 2>/dev/null | sort)
 
     if [[ -z "$CNA_FILES" ]]; then
-        echo "[!] No CNA files found"
+        echo -e "${RED}[!]${NC} No CNA files found"
         return 1
     fi
 
     for file in $CNA_FILES; do
-        echo "[*] Adding: $file"
+        echo -e "${YELLOW}[*]${NC} Adding: $file"
 
         {
             echo ""
@@ -201,7 +208,7 @@ combine_outflank_cna() {
     done
 
     echo
-    echo "[+] Combined CNA saved to:"
+    echo -e "${GREEN}[+]${NC} Combined CNA saved to:"
     echo "    $OUTPUT_FILE"
     echo
 }
@@ -211,17 +218,17 @@ combine_outflank_cna() {
     OUTPUT_FILE="$OPT_DIR/C2-Tool-Collection/BOF/Outflank-OpenSource.cna"
 
     echo
-    echo "[+] Combining CNA files from C2-Tool-Collection..."
+    echo -e "${BLUE}[+]${NC} Combining CNA files from C2-Tool-Collection..."
 
     if [ ! -d "$TARGET_DIR" ]; then
-        echo "[!] Missing: $TARGET_DIR"
+        echo -e "${RED}[!]${NC} Missing: $TARGET_DIR"
         return 1
     fi
 
     CNA_FILES=$(find "$TARGET_DIR" -type f -name "*.cna" ! -name "Outflank-OpenSource.cna" 2>/dev/null | sort)
 
     if [[ -z "$CNA_FILES" ]]; then
-        echo "[!] No CNA files found"
+        echo -e "${RED}[!]${NC} No CNA files found"
         return 1
     fi
 
@@ -242,7 +249,7 @@ combine_outflank_cna() {
         echo "" | sudo tee -a "$OUTPUT_FILE" > /dev/null
     done
 
-    echo "[+] Combined CNA saved to:"
+    echo -e "${GREEN}[+]${NC} Combined CNA saved to:"
     echo "    $OUTPUT_FILE"
     echo
 }
@@ -263,98 +270,98 @@ clone_repos() {
     clone_repo "$REPO13" "$OPT_DIR/cSessionHop"                   "cSessionHop by @jhalon"
     clone_repo "$REPO14" "$OPT_DIR/ScreenshotBOF"                 "ScreenshotBOF by @CodeXTF2"
     echo
-    echo -e "[+] Cloning complete\n"
+    echo -e "${GREEN}[+]${NC} Cloning complete\n"
 }
 
 compile_all() {
-    echo "[+] Compile BOFs..."
+    echo -e "${BLUE}[+]${NC} Compile BOFs..."
 
     if [ -d "$OPT_DIR/CS-Remote-OPs-BOF" ]; then
         cd "$OPT_DIR/CS-Remote-OPs-BOF"
         run_as_root bash make_all.sh
     else
-        echo "[!] Missing: $OPT_DIR/CS-Remote-OPs-BOF"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/CS-Remote-OPs-BOF"
     fi
 
     if [ -d "$OPT_DIR/CS-Situational-Awareness-BOF" ]; then
         cd "$OPT_DIR/CS-Situational-Awareness-BOF"
         run_as_root bash make_all.sh
     else
-        echo "[!] Missing: $OPT_DIR/CS-Situational-Awareness-BOF"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/CS-Situational-Awareness-BOF"
     fi
 
     if [ -d "$OPT_DIR/COM-Hunter" ]; then
         cd "$OPT_DIR/COM-Hunter/BOF"
         run_as_root bash make_all.sh
     else
-        echo "[!] Missing: $OPT_DIR/COM-Hunter"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/COM-Hunter"
     fi
 
     if [ -d "$OPT_DIR/PrivKit" ]; then
         cd "$OPT_DIR/PrivKit"
         run_as_root bash make_all.sh
     else
-        echo "[!] Missing: $OPT_DIR/PrivKit"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/PrivKit"
     fi
 
     if [ -d "$OPT_DIR/GetWebDAVStatus/GetWebDAVStatus_BOF/Source" ]; then
         cd "$OPT_DIR/GetWebDAVStatus/GetWebDAVStatus_BOF/Source"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/GetWebDAVStatus/GetWebDAVStatus_BOF/Source"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/GetWebDAVStatus/GetWebDAVStatus_BOF/Source"
     fi
 
     if [ -d "$OPT_DIR/sekken-enum/src" ]; then
         cd "$OPT_DIR/sekken-enum/src"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/sekken-enum"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/sekken-enum"
     fi
 
     if [ -d "$OPT_DIR/WebcamBOF" ]; then
         cd "$OPT_DIR/WebcamBOF"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/WebcamBOF"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/WebcamBOF"
     fi
 
     if [ -d "$OPT_DIR/RegPersist" ]; then
         cd "$OPT_DIR/RegPersist"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/RegPersist"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/RegPersist"
     fi
 
     if [ -d "$OPT_DIR/PersisTask-BOF" ]; then
         cd "$OPT_DIR/PersisTask-BOF"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/PersisTask-BOF"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/PersisTask-BOF"
     fi
-    
+
     if [ -d "$OPT_DIR/cSessionHop" ]; then
         cd "$OPT_DIR/cSessionHop"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/cSessionHop"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/cSessionHop"
     fi
 
     if [ -d "$OPT_DIR/ScreenshotBOF" ]; then
         cd "$OPT_DIR/ScreenshotBOF"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/ScreenshotBOF"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/ScreenshotBOF"
     fi
 
     if [ -d "$OPT_DIR/C2-Tool-Collection/BOF" ]; then
         cd "$OPT_DIR/C2-Tool-Collection/BOF"
         run_as_root make
     else
-        echo "[!] Missing: $OPT_DIR/C2-Tool-Collection"
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/C2-Tool-Collection"
     fi
 
     echo
-    echo "[+] Done!"
+    echo -e "${GREEN}[+]${NC} Done!"
 
     combine_outflank_cna
 
@@ -363,7 +370,7 @@ compile_all() {
 
 find_cna_internal() {
     echo
-    echo "[+] Searching for CNA files..."
+    echo -e "${BLUE}[+]${NC} Searching for CNA files..."
 
     FOUND=0
 
@@ -411,7 +418,7 @@ $REPO_PATH/BOF/Outflank-OpenSource.cna"
         if [[ -n "$CNA_FILES" ]]; then
             FOUND=1
             echo
-            echo "[+] $repo CNA by $AUTHOR:"
+            echo -e "${GREEN}[+]${NC} $repo CNA by $AUTHOR:"
 
             while IFS= read -r file; do
                 [ -n "$file" ] && echo "-> $file"
@@ -433,8 +440,8 @@ EOF
 
 find_cna() {
     if ! find_cna_internal; then
-        echo "[!] No CNA files found under /opt"
-        echo -e "[!] Please Run install Command...\n"
+        echo -e "${RED}[!]${NC} No CNA files found under /opt"
+        echo -e "${RED}[!]${NC} Please Run install Command...\n"
     fi
 }
 
@@ -445,9 +452,9 @@ do_install() {
 }
 
 do_clean() {
-    echo "[*] Cleaning up /opt (except /opt/homebrew)..."
+    echo -e "${YELLOW}[*]${NC} Cleaning up /opt (except /opt/homebrew)..."
     run_as_root find /opt -maxdepth 1 -mindepth 1 -type d ! -name homebrew -exec rm -rf {} +
-    echo -e "[+] Cleanup complete\n"
+    echo -e "${GREEN}[+]${NC} Cleanup complete\n"
 }
 
 case "$1" in
