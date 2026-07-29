@@ -159,16 +159,6 @@ install_dependencies() {
     command_exists clang && clang --version | head -n 1
     command_exists make && make --version | head -n 1
     command_exists git && git --version
-
-    echo
-    echo -e "${BLUE}[+]${NC} Verifying GitHub CLI authentication..."
-    if ! gh auth status >/dev/null 2>&1; then
-        echo -e "${YELLOW}[*]${NC} GitHub CLI installed but not authenticated"
-        echo -e "${YELLOW}[*]${NC} Please run: gh auth login"
-        gh auth login
-    else
-        echo -e "${GREEN}[+]${NC} GitHub CLI authenticated"
-    fi
 }
 
 clone_repo() {
@@ -381,17 +371,21 @@ compile_all() {
     echo -e "${GREEN}[+]${NC} Done!"
 
     combine_outflank_cna
-
-    find_cna_internal
 }
 
 find_cna_internal() {
+    local include_sleepmask=${1:-false}
     echo
     echo -e "${BLUE}[+]${NC} Searching for CNA files..."
 
     FOUND=0
 
-    for repo in CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop ScreenshotBOF; do
+    local repo_list="CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop ScreenshotBOF"
+    if [[ "$include_sleepmask" == "true" ]]; then
+        repo_list="$repo_list sleepmask-vs"
+    fi
+
+    for repo in $repo_list; do
         REPO_PATH="$OPT_DIR/$repo"
 
         [ ! -d "$REPO_PATH" ] && continue
@@ -411,6 +405,7 @@ find_cna_internal() {
             PersisTask-BOF) AUTHOR="@nickzer0" ;;
             cSessionHop) AUTHOR="@jhalon" ;;
             ScreenshotBOF) AUTHOR="@CodeXTF2" ;;
+            sleepmask-vs) AUTHOR="@_CobaltStrike" ;;
             *) AUTHOR="@unknown" ;;
         esac
 
@@ -428,6 +423,12 @@ $REPO_PATH/BOF/Outflank-OpenSource.cna"
                     CNA_FILES="$REPO_PATH/BOF/Outflank-OpenSource.cna"
                 fi
             fi
+        elif [[ "$repo" == "sleepmask-vs" ]]; then
+            CNA_FILES=$(find "$REPO_PATH" -type f -name "*.cna" \
+                ! -name "config.cna" \
+                ! -name "dialog.cna" \
+                ! -name "utils.cna" \
+                2>/dev/null | sort)
         else
             CNA_FILES=$(find "$REPO_PATH" -type f -name "*.cna" 2>/dev/null | sort)
         fi
@@ -456,7 +457,7 @@ EOF
 }
 
 find_cna() {
-    if ! find_cna_internal; then
+    if ! find_cna_internal true; then
         echo -e "${RED}[!]${NC} No CNA files found under /opt"
         echo -e "${RED}[!]${NC} Please Run install Command...\n"
     fi
@@ -464,59 +465,103 @@ find_cna() {
 
 do_install() {
     install_dependencies
+
+    echo
+    read -p "$(echo -e ${YELLOW}[*]${NC} Do you want to authenticate to GitHub [y/n]: )" -n 1 -r
+    echo
+    SETUP_GITHUB=false
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo
+        echo -e "${BLUE}[+]${NC} Checking GitHub authentication..."
+        if ! gh auth status >/dev/null 2>&1; then
+            echo -e "${YELLOW}[*]${NC} GitHub CLI not authenticated."
+            gh auth login
+        fi
+
+        if gh auth status >/dev/null 2>&1; then
+            echo -e "${GREEN}[+]${NC} GitHub authentication verified"
+            SETUP_GITHUB=true
+        fi
+    fi
+
     clone_repos
     compile_all
 
-    echo
-    echo -e "${BLUE}[+]${NC} Verifying GitHub CLI authentication..."
-    if ! gh auth status >/dev/null 2>&1; then
-        echo -e "${RED}[!]${NC} GitHub CLI not authenticated. Skipping sleepmask-vs setup."
-        return 0
-    fi
-    echo -e "${GREEN}[+]${NC} GitHub authentication verified"
+    if [[ "$SETUP_GITHUB" == "true" ]]; then
 
-    echo
-    clone_repo "https://github.com/nickvourd/sleepmask-vs.git" "$OPT_DIR/sleepmask-vs" "sleepmask-vs by @nickvourd"
+            echo
+            clone_repo "https://github.com/nickvourd/sleepmask-vs.git" "$OPT_DIR/sleepmask-vs" "sleepmask-vs by @_CobaltStrike"
 
-    echo
-    echo -e "${BLUE}[+]${NC} Fixing directory ownership for git operations..."
-    run_as_root chown -R "$(whoami)" "$OPT_DIR/sleepmask-vs"
+            echo
+            echo -e "${BLUE}[+]${NC} Fixing directory ownership for git operations..."
+            run_as_root chown -R "$(whoami)" "$OPT_DIR/sleepmask-vs"
 
-    echo
-    echo -e "${BLUE}[+]${NC} Navigating to sleepmask-vs directory..."
-    pushd "$OPT_DIR/sleepmask-vs" > /dev/null
+            echo
+            echo -e "${BLUE}[+]${NC} Navigating to sleepmask-vs directory..."
+            pushd "$OPT_DIR/sleepmask-vs" > /dev/null
 
-    echo -e "${BLUE}[+]${NC} Triggering GitHub workflow..."
-    if gh workflow run build.yml; then
-        echo -e "${GREEN}[+]${NC} Workflow triggered successfully"
+            echo -e "${BLUE}[+]${NC} Setting default GitHub repository..."
+            gh repo set-default nickvourd/sleepmask-vs
+
+            echo -e "${BLUE}[+]${NC} Triggering GitHub workflow..."
+            if gh workflow run build-sleepmask.yml; then
+                echo -e "${GREEN}[+]${NC} Workflow triggered successfully"
+            else
+                echo -e "${YELLOW}[*]${NC} Warning: Failed to trigger workflow"
+            fi
+
+            echo
+            echo -e "${BLUE}[+]${NC} Watching workflow run..."
+            if ! gh run watch; then
+                echo -e "${YELLOW}[*]${NC} Warning: Workflow run did not succeed. Attempting artifact download anyway..."
+            else
+                echo -e "${GREEN}[+]${NC} Workflow completed successfully"
+            fi
+
+            echo
+            echo -e "${BLUE}[+]${NC} Downloading artifacts..."
+            if gh run download; then
+                echo -e "${GREEN}[+]${NC} Artifacts downloaded successfully"
+
+                echo -e "${BLUE}[+]${NC} Organizing artifacts..."
+                # Move x64 artifacts
+                if [ -d "sleepmask-bof-x64" ]; then
+                    if [ -d "sleepmask-bof-x64/x64/Release" ]; then
+                        run_as_root mkdir -p "x64/Release"
+                        run_as_root mv "sleepmask-bof-x64/x64/Release/"* "x64/Release/" 2>/dev/null || true
+                    fi
+                    run_as_root rm -rf "sleepmask-bof-x64"
+                fi
+
+                # Move x86 artifacts
+                if [ -d "sleepmask-bof-x86" ]; then
+                    if [ -d "sleepmask-bof-x86/x86/Release" ]; then
+                        run_as_root mkdir -p "x86/Release"
+                        run_as_root mv "sleepmask-bof-x86/x86/Release/"* "x86/Release/" 2>/dev/null || true
+                    fi
+                    run_as_root rm -rf "sleepmask-bof-x86"
+                fi
+
+                echo -e "${GREEN}[+]${NC} Artifacts organized to x64/Release and x86/Release"
+            else
+                echo -e "${YELLOW}[*]${NC} Warning: Artifact download failed or no artifacts available"
+            fi
+
+            echo
+            echo -e "${BLUE}[+]${NC} Returning to original directory..."
+            popd > /dev/null
+
+            echo
+            echo -e "${GREEN}[+]${NC} Sleepmask-vs setup complete!"
+            echo -e "${GREEN}[+]${NC} Artifacts location: $OPT_DIR/sleepmask-vs"
+
+            echo
+            find_cna_internal true
     else
-        echo -e "${YELLOW}[*]${NC} Warning: Failed to trigger workflow"
+        echo
+        find_cna_internal false
     fi
-
-    echo
-    echo -e "${BLUE}[+]${NC} Watching workflow run..."
-    if ! gh run watch; then
-        echo -e "${YELLOW}[*]${NC} Warning: Workflow run did not succeed. Attempting artifact download anyway..."
-    else
-        echo -e "${GREEN}[+]${NC} Workflow completed successfully"
-    fi
-
-    echo
-    echo -e "${BLUE}[+]${NC} Downloading artifacts..."
-    if gh run download; then
-        echo -e "${GREEN}[+]${NC} Artifacts downloaded successfully"
-    else
-        echo -e "${YELLOW}[*]${NC} Warning: Artifact download failed or no artifacts available"
-    fi
-
-    echo
-    echo -e "${BLUE}[+]${NC} Returning to original directory..."
-    popd > /dev/null
-
-    echo
-    echo -e "${GREEN}[+]${NC} Installation complete!"
-    echo -e "${GREEN}[+]${NC} Artifacts location: $OPT_DIR/sleepmask-vs"
-    echo
 }
 
 do_clean() {
