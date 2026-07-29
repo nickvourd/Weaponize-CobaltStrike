@@ -51,12 +51,11 @@ run_as_root() {
 }
 
 usage() {
-    echo "Usage: $0 {install|clean|cna|full-install}"
+    echo "Usage: $0 {install|clean|cna}"
     echo
-    echo "  install      Install dependencies, clone repos, and compile everything"
-    echo "  clean        Delete everything under /opt except /opt/homebrew"
-    echo "  cna          Find all .cna files under /opt; if none exist, run install"
-    echo "  full-install Run install, clone sleepmask-vs, trigger workflow, and download artifacts"
+    echo "  install   Install dependencies, clone repos, compile everything, and setup sleepmask-vs workflow"
+    echo "  clean     Delete everything under /opt except /opt/homebrew"
+    echo "  cna       Find all .cna files under /opt; if none exist, run install"
     exit 1
 }
 
@@ -467,43 +466,21 @@ do_install() {
     install_dependencies
     clone_repos
     compile_all
-}
-
-do_clean() {
-    echo -e "${YELLOW}[*]${NC} Cleaning up /opt (except /opt/homebrew)..."
-    run_as_root find /opt -maxdepth 1 -mindepth 1 -type d ! -name homebrew -exec rm -rf {} +
-    echo -e "${GREEN}[+]${NC} Cleanup complete\n"
-}
-
-check_gh_auth() {
-    if ! command_exists gh; then
-        echo -e "${RED}[!]${NC} GitHub CLI not found. Please run install first."
-        return 1
-    fi
-
-    if ! gh auth status >/dev/null 2>&1; then
-        echo -e "${RED}[!]${NC} Not authenticated to GitHub."
-        echo -e "${YELLOW}[*]${NC} Please run: gh auth login"
-        return 1
-    fi
-
-    echo -e "${GREEN}[+]${NC} GitHub authentication verified"
-    return 0
-}
-
-full_install() {
-    echo -e "${BLUE}[+]${NC} Starting full installation...\n"
-
-    do_install
 
     echo
-    echo -e "${BLUE}[+]${NC} Checking GitHub authentication..."
-    if ! check_gh_auth; then
-        return 1
+    echo -e "${BLUE}[+]${NC} Verifying GitHub CLI authentication..."
+    if ! gh auth status >/dev/null 2>&1; then
+        echo -e "${RED}[!]${NC} GitHub CLI not authenticated. Skipping sleepmask-vs setup."
+        return 0
     fi
+    echo -e "${GREEN}[+]${NC} GitHub authentication verified"
 
     echo
     clone_repo "https://github.com/nickvourd/sleepmask-vs.git" "$OPT_DIR/sleepmask-vs" "sleepmask-vs by @nickvourd"
+
+    echo
+    echo -e "${BLUE}[+]${NC} Fixing directory ownership for git operations..."
+    run_as_root chown -R "$(whoami)" "$OPT_DIR/sleepmask-vs"
 
     echo
     echo -e "${BLUE}[+]${NC} Navigating to sleepmask-vs directory..."
@@ -537,10 +514,17 @@ full_install() {
     popd > /dev/null
 
     echo
-    echo -e "${GREEN}[+]${NC} Full installation complete!"
+    echo -e "${GREEN}[+]${NC} Installation complete!"
     echo -e "${GREEN}[+]${NC} Artifacts location: $OPT_DIR/sleepmask-vs"
     echo
 }
+
+do_clean() {
+    echo -e "${YELLOW}[*]${NC} Cleaning up /opt (except /opt/homebrew)..."
+    run_as_root find /opt -maxdepth 1 -mindepth 1 -type d ! -name homebrew -exec rm -rf {} +
+    echo -e "${GREEN}[+]${NC} Cleanup complete\n"
+}
+
 
 case "$1" in
     install)
@@ -551,9 +535,6 @@ case "$1" in
         ;;
     cna)
         find_cna
-        ;;
-    full-install)
-        full_install
         ;;
     *)
         usage
