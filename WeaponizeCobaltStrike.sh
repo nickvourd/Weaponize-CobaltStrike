@@ -51,11 +51,12 @@ run_as_root() {
 }
 
 usage() {
-    echo "Usage: $0 {install|clean|cna}"
+    echo "Usage: $0 {install|clean|cna|full-install}"
     echo
-    echo "  install   Install dependencies, clone repos, and compile everything"
-    echo "  clean     Delete everything under /opt except /opt/homebrew"
-    echo "  cna       Find all .cna files under /opt; if none exist, run install"
+    echo "  install      Install dependencies, clone repos, and compile everything"
+    echo "  clean        Delete everything under /opt except /opt/homebrew"
+    echo "  cna          Find all .cna files under /opt; if none exist, run install"
+    echo "  full-install Run install, clone sleepmask-vs, trigger workflow, and download artifacts"
     exit 1
 }
 
@@ -102,6 +103,13 @@ install_macos() {
         echo -e "${GREEN}[+]${NC} LLVM already installed"
     fi
 
+    if ! command_exists gh; then
+        echo -e "${YELLOW}[*]${NC} Installing GitHub CLI..."
+        brew install gh
+    else
+        echo -e "${GREEN}[+]${NC} GitHub CLI already installed"
+    fi
+
     LLVM_PATH="/opt/homebrew/opt/llvm/bin"
     if [[ ":$PATH:" != *":$LLVM_PATH:"* ]]; then
         echo -e "${YELLOW}[*]${NC} Adding LLVM to PATH for current session"
@@ -119,11 +127,11 @@ install_linux() {
 
     if command_exists apt; then
         $SUDO apt update
-        $SUDO apt install -y git make mingw-w64 llvm clang
+        $SUDO apt install -y git make mingw-w64 llvm clang gh
     elif command_exists dnf; then
-        $SUDO dnf install -y git make mingw64-gcc llvm clang
+        $SUDO dnf install -y git make mingw64-gcc llvm clang gh
     elif command_exists pacman; then
-        $SUDO pacman -Sy --noconfirm git make mingw-w64-gcc llvm clang
+        $SUDO pacman -Sy --noconfirm git make mingw-w64-gcc llvm clang gh
     else
         echo -e "${RED}[!]${NC} Unsupported Linux distribution"
         exit 1
@@ -457,6 +465,73 @@ do_clean() {
     echo -e "${GREEN}[+]${NC} Cleanup complete\n"
 }
 
+check_gh_auth() {
+    if ! command_exists gh; then
+        echo -e "${RED}[!]${NC} GitHub CLI not found. Please run install first."
+        return 1
+    fi
+
+    if ! gh auth status >/dev/null 2>&1; then
+        echo -e "${RED}[!]${NC} Not authenticated to GitHub."
+        echo -e "${YELLOW}[*]${NC} Please run: gh auth login"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${NC} GitHub authentication verified"
+    return 0
+}
+
+full_install() {
+    echo -e "${BLUE}[+]${NC} Starting full installation...\n"
+
+    do_install
+
+    echo
+    echo -e "${BLUE}[+]${NC} Checking GitHub authentication..."
+    if ! check_gh_auth; then
+        return 1
+    fi
+
+    echo
+    clone_repo "https://github.com/nickvourd/sleepmask-vs.git" "$OPT_DIR/sleepmask-vs" "sleepmask-vs by @nickvourd"
+
+    echo
+    echo -e "${BLUE}[+]${NC} Navigating to sleepmask-vs directory..."
+    pushd "$OPT_DIR/sleepmask-vs" > /dev/null
+
+    echo -e "${BLUE}[+]${NC} Triggering GitHub workflow..."
+    if gh workflow run build.yml; then
+        echo -e "${GREEN}[+]${NC} Workflow triggered successfully"
+    else
+        echo -e "${YELLOW}[*]${NC} Warning: Failed to trigger workflow"
+    fi
+
+    echo
+    echo -e "${BLUE}[+]${NC} Watching workflow run..."
+    if ! gh run watch; then
+        echo -e "${YELLOW}[*]${NC} Warning: Workflow run did not succeed. Attempting artifact download anyway..."
+    else
+        echo -e "${GREEN}[+]${NC} Workflow completed successfully"
+    fi
+
+    echo
+    echo -e "${BLUE}[+]${NC} Downloading artifacts..."
+    if gh run download; then
+        echo -e "${GREEN}[+]${NC} Artifacts downloaded successfully"
+    else
+        echo -e "${YELLOW}[*]${NC} Warning: Artifact download failed or no artifacts available"
+    fi
+
+    echo
+    echo -e "${BLUE}[+]${NC} Returning to original directory..."
+    popd > /dev/null
+
+    echo
+    echo -e "${GREEN}[+]${NC} Full installation complete!"
+    echo -e "${GREEN}[+]${NC} Artifacts location: $OPT_DIR/sleepmask-vs"
+    echo
+}
+
 case "$1" in
     install)
         do_install
@@ -466,6 +541,9 @@ case "$1" in
         ;;
     cna)
         find_cna
+        ;;
+    full-install)
+        full_install
         ;;
     *)
         usage
