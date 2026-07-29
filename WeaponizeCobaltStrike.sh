@@ -160,6 +160,16 @@ install_dependencies() {
     command_exists clang && clang --version | head -n 1
     command_exists make && make --version | head -n 1
     command_exists git && git --version
+
+    echo
+    echo -e "${BLUE}[+]${NC} Verifying GitHub CLI authentication..."
+    if ! gh auth status >/dev/null 2>&1; then
+        echo -e "${YELLOW}[*]${NC} GitHub CLI installed but not authenticated"
+        echo -e "${YELLOW}[*]${NC} Please run: gh auth login"
+        gh auth login
+    else
+        echo -e "${GREEN}[+]${NC} GitHub CLI authenticated"
+    fi
 }
 
 clone_repo() {
