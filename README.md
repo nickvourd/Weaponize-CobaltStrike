@@ -41,7 +41,7 @@ Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 
 With GitHub Authentication:
 
-- [sleepmask-vs](https://github.com/nickvourd/sleepmask-vs) - Sleepmask BOF
+- [sleepmask-vs](https://github.com/Cobalt-Strike/sleepmask-vs) - Sleepmask BOF
 
 > If you find any bugs or have suggestions, don't hesitate to [report them](https://github.com/nickvourd/Weaponize-CobaltStrike/issues). Your feedback is valuable in improving the quality of this project!
 
