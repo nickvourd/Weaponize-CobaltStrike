@@ -38,6 +38,7 @@ Weaponize-CobaltStrike automates the deployment of the following tools and BOFs:
 - [PersisTask-BOF](https://github.com/nickzer0/PersisTask-BOF) - Persistence through scheduled tasks
 - [cSessionHop](https://github.com/jhalon/cSessionHop) - Hijack user sessions through the IHxHelpPaneServer
 - [ScreenshotBOF](https://github.com/CodeXTF2/ScreenshotBOF) - An alternative screenshot capability for CS
+- [https://github.com/Tw1sm/SQL-BOF](https://github.com/Tw1sm/SQL-BOF) - BOF for interacting with remote SQL servers
 
 With GitHub Authentication:
 
