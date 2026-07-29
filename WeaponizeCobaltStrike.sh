@@ -37,6 +37,7 @@ REPO11="https://github.com/outflanknl/HelpColor.git"
 REPO12="https://github.com/nickzer0/PersisTask-BOF.git"
 REPO13="https://github.com/jhalon/cSessionHop.git"
 REPO14="https://github.com/CodeXTF2/ScreenshotBOF.git"
+REPO15="https://github.com/Tw1sm/SQL-BOF.git"
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -276,6 +277,7 @@ clone_repos() {
     clone_repo "$REPO12" "$OPT_DIR/PersisTask-BOF"                "PersisTask-BOF by @nickzer0"
     clone_repo "$REPO13" "$OPT_DIR/cSessionHop"                   "cSessionHop by @jhalon"
     clone_repo "$REPO14" "$OPT_DIR/ScreenshotBOF"                 "ScreenshotBOF by @CodeXTF2"
+    clone_repo "$REPO15" "$OPT_DIR/SQL-BOF"                       "SQL-BOF by @Tw1sm"
     echo
     echo -e "${GREEN}[+]${NC} Cloning complete\n"
 }
@@ -309,6 +311,13 @@ compile_all() {
         run_as_root bash make_all.sh
     else
         echo -e "${RED}[!]${NC} Missing: $OPT_DIR/PrivKit"
+    fi
+
+     if [ -d "$OPT_DIR/SQL-BOF" ]; then
+        cd "$OPT_DIR/SQL-BOF"
+        run_as_root bash make_all.sh
+    else
+        echo -e "${RED}[!]${NC} Missing: $OPT_DIR/SQL-BOF"
     fi
 
     if [ -d "$OPT_DIR/GetWebDAVStatus/GetWebDAVStatus_BOF/Source" ]; then
@@ -380,7 +389,7 @@ find_cna_internal() {
 
     FOUND=0
 
-    local repo_list="CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop ScreenshotBOF"
+    local repo_list="CS-Aggressor-Kit CS-Remote-OPs-BOF CS-Situational-Awareness-BOF GetWebDAVStatus C2-Tool-Collection sekken-enum WebcamBOF COM-Hunter PrivKit RegPersist HelpColor cSessionHop ScreenshotBOF SQL-BOF"
     if [[ "$include_sleepmask" == "true" ]]; then
         repo_list="$repo_list sleepmask-vs"
     fi
@@ -405,6 +414,7 @@ find_cna_internal() {
             PersisTask-BOF) AUTHOR="@nickzer0" ;;
             cSessionHop) AUTHOR="@jhalon" ;;
             ScreenshotBOF) AUTHOR="@CodeXTF2" ;;
+            SQL-BOF) AUTHOR="@Tw1sm" ;;
             sleepmask-vs) AUTHOR="@_CobaltStrike" ;;
             *) AUTHOR="@unknown" ;;
         esac
